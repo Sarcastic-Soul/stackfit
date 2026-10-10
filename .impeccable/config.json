@@ -4,6 +4,16 @@
     "ignoreFiles": [
       "design-options/**"
     ],
-    "ignoreValues": []
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "devpost/app-map.html"
+        ],
+        "createdAt": "2026-10-10T13:04:20.260Z",
+        "reason": "Learner-chosen StackFit slab style (3px left edge), kept on purpose; app map matches the app"
+      }
+    ]
   }
 }
