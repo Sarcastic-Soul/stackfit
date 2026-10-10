@@ -82,23 +82,23 @@ Build mode: fast
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 3 (the kernel works end to end locally)
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed — learner tried the live Vercel app (10 Oct 2026): "looks great", no changes requested
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship (no open feedback; learner moved on to the demo video and submission)
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence:
-Route and stops:
-Edit outcome:
-Reflection:
-Activity mode:
+Activity and evidence: brief evidence-based recap. The learner went straight to shipping, so nothing was toured together. Evidence: the slice 3 fix where a fact from a consumer pricing page was tagged verified, which led to the tag rules in `tagFacts`.
+Route and stops: reference route only (not toured): `web/src/App.tsx` `pickStack`, `server/app.ts` `app.post("/stack"`, `server/lib/checkFacts.ts` `tagFacts`.
+Edit outcome: not applicable (no tour).
+Reflection: optional transfer question offered at hand-off.
+Activity mode: recap plus app map (`devpost/app-map.html`, from commit df7de04).
 
 ## Revisions
 
