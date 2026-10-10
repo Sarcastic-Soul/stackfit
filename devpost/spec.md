@@ -46,9 +46,9 @@ Tradeoff accepted: Next.js would bundle the page and API routes together for fre
 - Google Search grounding is **not usable on the free key**: 429 quota errors on Gemini 3.x, and Gemini 2.5 models return 404 "no longer available to new users".
 - The **URL context tool works free** on `gemini-3.5-flash-lite` (about 2s) and `gemini-3.8-flash` (about 25s, often 503 "high demand"). Both read https://neon.com/pricing.
 - URL context **combines with JSON-schema output** (`responseJsonSchema`) in one call.
+- **Exa search works** on the learner's free key: a `type: "fast"` search limited to neon.com returned 3 official Neon pages with text.
 
 **Still unverified:**
-- Exa search on the learner's free key (checked by the same script once `EXA_API_KEY` is set).
 - The exact way to serve a Vite build and a Hono API from one Vercel project (`api/` catch-all with `hono/vercel` versus zero-config `server.ts`). Pick whichever deploys cleanly.
 
 ## Where It Runs and How Someone Tries It
