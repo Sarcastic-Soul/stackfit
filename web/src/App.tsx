@@ -3,6 +3,7 @@ import type { HackathonSummary, StackResult } from "../../api/lib/types";
 import { ErrorLine } from "./components/ErrorLine";
 import { HowItWorks } from "./components/HowItWorks";
 import { LinkInput } from "./components/LinkInput";
+import { PasteFallback } from "./components/PasteFallback";
 import { StackView } from "./components/StackView";
 import { StageLog } from "./components/StageLog";
 import { SummaryAndIdea } from "./components/SummaryAndIdea";
@@ -13,6 +14,7 @@ export function App() {
   const stack = useRun();
   const [summary, setSummary] = useState<HackathonSummary | null>(null);
   const [result, setResult] = useState<StackResult | null>(null);
+  const [unreadableUrl, setUnreadableUrl] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   // Bring the finished stack into view (instantly when the user prefers less motion).
@@ -22,13 +24,22 @@ export function App() {
     resultRef.current?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
   }, [result]);
 
-  function readLink(url: string) {
+  function readHackathon(body: { url: string; pastedText?: string }) {
     setSummary(null);
     setResult(null);
     stack.reset();
-    hackathon.run("/api/hackathon", { url }, (event) => {
-      if (event.type === "summary") setSummary(event.data);
+    hackathon.run("/api/hackathon", body, (event) => {
+      if (event.type === "unreadable") setUnreadableUrl(body.url);
+      if (event.type === "summary") {
+        setUnreadableUrl(null);
+        setSummary(event.data);
+      }
     });
+  }
+
+  function readLink(url: string) {
+    setUnreadableUrl(null);
+    readHackathon({ url });
   }
 
   function pickStack(idea: string) {
@@ -57,11 +68,17 @@ export function App() {
 
       <div className="mt-12 space-y-4">
         {hackathon.stages.length > 0 && <StageLog stages={hackathon.stages} />}
+        {unreadableUrl && (
+          <PasteFallback
+            busy={hackathon.busy}
+            onSubmit={(pastedText) => readHackathon({ url: unreadableUrl, pastedText })}
+          />
+        )}
         {hackathon.error && <ErrorLine message={hackathon.error} />}
         {summary && <SummaryAndIdea summary={summary} busy={stack.busy} onPick={pickStack} />}
       </div>
 
-      {!summary && <HowItWorks />}
+      {!summary && !unreadableUrl && <HowItWorks />}
 
       {(stack.stages.length > 0 || stack.error || result) && (
         <div ref={resultRef} className="mt-10 scroll-mt-6 space-y-4">

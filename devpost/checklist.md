@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: Run your own real idea for this hackathon. Do the picks and the "instead of" defaults make sense to you? Click a few source links and check the numbers.
   Commit: `Pick a stack with live-checked, tagged facts`
 
-- [ ] **4. Unreadable links fall back to pasted text**
+- [x] **4. Unreadable links fall back to pasted text**
   Becomes usable: A private, login-only, or JS-only hackathon page shows "The link you provided isn't accessible from here. Please confirm the link is public." plus a paste box; pasted text continues the same journey.
   Why now: The core journey is proven; this protects it for sites like Devfolio and Unstop before the edit loop adds more surface.
   PRD ref: `prd.md > Features and Behavior > Unreadable link fallback`, `prd.md > States and Boundaries`

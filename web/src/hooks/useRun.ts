@@ -25,6 +25,9 @@ export function useRun() {
       await streamEvents(path, body, (event) => {
         if (event.type === "stage") {
           setStages((s) => [...s.map((x) => ({ ...x, state: "done" as const })), { label: event.label, state: "now" }]);
+        } else if (event.type === "unreadable") {
+          finishStages("failed");
+          onEvent(event);
         } else if (event.type === "error") {
           finishStages("failed");
           setError(event.message);

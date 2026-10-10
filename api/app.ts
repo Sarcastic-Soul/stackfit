@@ -12,6 +12,8 @@ import type { HackathonSummary, StreamEvent } from "./lib/types";
 export const app = new Hono().basePath("/api");
 
 const MAX_IDEA_CHARS = 1200;
+const MIN_PASTED_CHARS = 200;
+const MAX_PASTED_CHARS = 30_000;
 
 // Errors shown to the user as-is (bad input), not logged as failures.
 class InputError extends Error {}
@@ -22,7 +24,12 @@ function errorMessage(err: unknown, fallback: string) {
   return fallback;
 }
 
-function ndjson(c: Parameters<typeof stream>[0], name: string, fallback: string, run: (send: (e: StreamEvent) => Promise<unknown>) => Promise<void>) {
+function ndjson(
+  c: Parameters<typeof stream>[0],
+  name: string,
+  fallback: string,
+  run: (send: (e: StreamEvent) => Promise<unknown>) => Promise<void>,
+) {
   c.header("content-type", "application/x-ndjson; charset=utf-8");
   return stream(c, async (s) => {
     const send = (event: StreamEvent) => s.write(JSON.stringify(event) + "\n");
@@ -35,14 +42,37 @@ function ndjson(c: Parameters<typeof stream>[0], name: string, fallback: string,
   });
 }
 
+// Only kept as the summary's source link, never fetched.
+function linkOrUndefined(raw: unknown) {
+  if (typeof raw !== "string") return undefined;
+  try {
+    const u = new URL(raw);
+    return u.protocol === "https:" || u.protocol === "http:" ? u.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// { url } fetches and reads the page. If it can't be read, the stream sends
+// `unreadable` and the page asks for the text, which comes back as { pastedText, url }.
 app.post("/hackathon", async (c) => {
-  const body = await c.req.json<{ url?: string }>().catch(() => ({}) as { url?: string });
+  type Body = { url?: unknown; pastedText?: unknown };
+  const body = await c.req.json<Body>().catch(() => ({}) as Body);
   return ndjson(c, "/api/hackathon", "Something went wrong reading that page. Try again.", async (send) => {
-    if (!body.url) throw new InputError("Paste a hackathon link first.");
+    if (typeof body.pastedText === "string") {
+      const text = body.pastedText.trim();
+      if (text.length < MIN_PASTED_CHARS)
+        throw new InputError("That's too short. Paste the whole page: rules, prizes and requirements.");
+      await send({ type: "stage", label: "Reading the rules" });
+      const summary = await readHackathon(text.slice(0, MAX_PASTED_CHARS), linkOrUndefined(body.url));
+      await send({ type: "summary", data: summary });
+      return;
+    }
+    if (typeof body.url !== "string" || !body.url) throw new InputError("Paste a hackathon link first.");
     await send({ type: "stage", label: "Fetching page" });
     const page = await fetchPage(body.url);
     if (!page.ok) {
-      await send({ type: "error", message: "The link you provided isn't accessible from here. Please confirm the link is public." });
+      await send({ type: "unreadable" });
       return;
     }
     await send({ type: "stage", label: "Reading the rules" });
@@ -60,7 +90,9 @@ function cleanSummary(raw: unknown): HackathonSummary | null {
     name: String(r.name ?? "").slice(0, 200),
     requiredTech: strings(r.requiredTech),
     liveLinkRequired: r.liveLinkRequired === true || r.liveLinkRequired === false ? r.liveLinkRequired : "unknown",
-    platform: ["web", "mobile", "either"].includes(r.platform as string) ? (r.platform as HackathonSummary["platform"]) : "unknown",
+    platform: ["web", "mobile", "either"].includes(r.platform as string)
+      ? (r.platform as HackathonSummary["platform"])
+      : "unknown",
     notes: strings(r.notes).slice(0, 5),
   };
 }
