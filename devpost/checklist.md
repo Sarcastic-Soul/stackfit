@@ -49,7 +49,7 @@ Build mode: fast
   Learner check: Paste a link to a hackathon on a site that doesn't render without JavaScript (or a private link), see the message, paste the page text, and continue to a summary.
   Commit: `Fall back to pasted text for unreadable links`
 
-- [ ] **5. Edit picks and add past tools to refine the stack**
+- [x] **5. Edit picks and add past tools to refine the stack**
   Becomes usable: On the result, you change any number of picks and/or type tools you've used before, submit, and only the affected cards update with fresh live facts.
   Why now: Needs a working result to edit; it's the second half of the core loop.
   PRD ref: `prd.md > The Core Journey` (step 7), `prd.md > Features and Behavior > Refine the stack`
@@ -81,7 +81,7 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 3 (the kernel works end to end locally)
+- [x] Early usable behavior explored — after slice 3 (the kernel works end to end locally)
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -106,3 +106,4 @@ Activity mode:
 - 10 Oct 2026, slice 2: Learner picked design option 5 ("The stack", graphite plus soft green) after a second round of options (first round had no layout they liked; they liked option 3's colors). Learner also asked for brand icons on each pick: added Simple Icons (resolved on the server from the `simple-icons` package) to `spec.md > Look and Feel`, `Data Model` and `Stack picker`. Icons ship in slice 3 with the stack cards.
 - 10 Oct 2026, slice 3: Each layer now has a `kind` (service or library), because free tier questions don't fit frameworks like Vite; libraries get license, install weight and speed facts, read from their docs and npm pages. Docs URLs off the official domain are dropped before lookup, so a redirect on an official link (vitejs.dev to vite.dev) can still be verified. Picker prompt now says services need a no-card free tier and that build-only tools (Claude Code, Git) aren't runtime layers, after test runs picked Claude API and Express on Render. Spec updated (`Data Model`, `Live fact checker`).
 - 10 Oct 2026, after slice 3 hands-on check: Learner found the first visit looked empty and asked for a visual explainer (less text) and an auto-scroll to the finished stack. Added `HowItWorks` (flow track plus an example bar that explains the tags), shown until a summary loads, and a scroll to the result that respects reduced motion.
+- 10 Oct 2026, slice 5: Edits go to the same `/api/stack` route with `previous` and `edits`; the picker returns only changed layers and the server keeps the rest byte-identical. Refine prompt keeps `usualDefault` as the usual AI suggestion (not the old pick) and keeps the why lines about the tool, after a test run showed "Chosen by the user in swaps." Spec updated (`The Core Journey`, `Edit panel`, `Stack picker`).

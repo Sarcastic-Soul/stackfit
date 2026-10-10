@@ -25,7 +25,7 @@ PRD ref: `prd.md > The Core Journey`.
 4. The page shows the summary and the idea box. On submit it sends `POST /api/stack` with `{ hackathon, idea }`.
 5. The API streams stages: "Working out what your idea needs", "Choosing the lightest stack", then "Checking live limits: <service>" once per pick.
 6. The API streams the finished `StackResult`, and the page draws one card per layer.
-7. On edit, the page sends `POST /api/stack` again with the previous result, the swapped picks, and any past tools. The API changes and rechecks only the affected layers and returns the full result. Untouched cards keep their earlier facts.
+7. On edit, the page sends `POST /api/stack` again with `{ hackathon, idea, previous, edits: { swaps, pastTools } }`. The API streams "Applying your changes", then "Checking live limits" only for the layers that changed, and returns the full result with `changed`. Untouched layers come back exactly as sent, so their cards keep their earlier facts. The old stack stays on screen while this runs.
 8. "Copy as prompt" builds the prompt text on the page itself and copies it to the clipboard. No API call.
 
 ## Stack
@@ -103,7 +103,7 @@ One card per layer: the pick, the usual AI default beside it, why it fits, why i
 PRD ref: `prd.md > Features and Behavior > Stack result`, `prd.md > Features and Behavior > Live facts with confidence tags`.
 
 ### Edit panel (`web/src/components/EditPanel.tsx`)
-Lets the user change any number of picks (free text per layer) and type past tools. Submits once and marks changed layers.
+Lets the user change any number of picks (free text per layer) and type past tools. Submits once and marks changed layers. An "Edit picks" button under the stack opens one input per layer (prefilled with the pick) and a past tools input. Submitting with nothing changed shows "Change a pick or add a tool first." Cards listed in `changed` get an "updated" label and an accent edge.
 PRD ref: `prd.md > Features and Behavior > Refine the stack`.
 
 ### Copy as prompt (`web/src/lib/prompt.ts` + button in the result view)
@@ -125,7 +125,7 @@ One Gemini call (no search) on the page text, returning a `HackathonSummary` as 
 PRD ref: `prd.md > Features and Behavior > Hackathon link`.
 
 ### Stack picker (`api/lib/pickStack.ts`)
-One Gemini call (no search). Input: summary, idea, optional past tools and swapped picks. Output: the inferred needs plus one `Layer` per needed layer (pick, default, why, whyBeatsDefault, official domain and docs URLs, and Simple Icons slugs for the pick and the default). The server looks each slug up in the `simple-icons` package and sends only the matching SVG paths; an unknown slug gives no icon (the page shows the fallback). On an edit it receives the previous result, keeps unchanged layers as they are, and returns which layers changed. The prompt tells it to prefer the lightest tool that meets the needs, respect sponsor-required tech, and favor free tiers that don't sleep or pause when a live link is needed.
+One Gemini call (no search). Input: summary, idea, optional past tools and swapped picks. Output: the inferred needs plus one `Layer` per needed layer (pick, default, why, whyBeatsDefault, official domain and docs URLs, and Simple Icons slugs for the pick and the default). The server looks each slug up in the `simple-icons` package and sends only the matching SVG paths; an unknown slug gives no icon (the page shows the fallback). On an edit (`refineStack`) it receives the previous result and the edits, and returns only the layers it changes: each swap exactly as typed, a past tool only when it's close to as light and free, and other layers only if a swap breaks them. A swap always wins: if the model skips a swapped layer, the server builds a plain layer for it with no docs links, so its facts come from Exa. The server echoes every other layer back untouched. The prompt tells it to prefer the lightest tool that meets the needs, respect sponsor-required tech, and favor free tiers that don't sleep or pause when a live link is needed.
 PRD ref: `prd.md > Features and Behavior > Idea description`, `prd.md > Features and Behavior > Stack result`, `prd.md > Features and Behavior > Refine the stack`.
 
 ### Live fact checker (`api/lib/checkFacts.ts`)

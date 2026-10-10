@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { HackathonSummary, StackResult } from "../../api/lib/types";
+import { EditPanel, type Edits } from "./components/EditPanel";
 import { ErrorLine } from "./components/ErrorLine";
 import { HowItWorks } from "./components/HowItWorks";
 import { LinkInput } from "./components/LinkInput";
@@ -14,6 +15,8 @@ export function App() {
   const stack = useRun();
   const [summary, setSummary] = useState<HackathonSummary | null>(null);
   const [result, setResult] = useState<StackResult | null>(null);
+  const [idea, setIdea] = useState("");
+  const [changed, setChanged] = useState<string[]>([]);
   const [unreadableUrl, setUnreadableUrl] = useState<string | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -42,10 +45,22 @@ export function App() {
     readHackathon({ url });
   }
 
-  function pickStack(idea: string) {
+  function pickStack(newIdea: string) {
     setResult(null);
-    stack.run("/api/stack", { hackathon: summary, idea }, (event) => {
+    setChanged([]);
+    setIdea(newIdea);
+    stack.run("/api/stack", { hackathon: summary, idea: newIdea }, (event) => {
       if (event.type === "result") setResult(event.data);
+    });
+  }
+
+  // Keeps the current stack on screen while only the edited layers are rechecked.
+  function refineStack(edits: Edits) {
+    stack.run("/api/stack", { hackathon: summary, idea, previous: result, edits }, (event) => {
+      if (event.type === "result") {
+        setChanged(event.changed ?? []);
+        setResult(event.data);
+      }
     });
   }
 
@@ -84,7 +99,12 @@ export function App() {
         <div ref={resultRef} className="mt-10 scroll-mt-6 space-y-4">
           {stack.stages.length > 0 && <StageLog stages={stack.stages} />}
           {stack.error && <ErrorLine message={stack.error} />}
-          {result && <StackView result={result} />}
+          {result && (
+            <>
+              <StackView result={result} changed={changed} />
+              <EditPanel result={result} busy={stack.busy} onSubmit={refineStack} />
+            </>
+          )}
         </div>
       )}
     </main>

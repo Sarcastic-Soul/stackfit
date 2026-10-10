@@ -44,5 +44,5 @@ export type StreamEvent =
   | { type: "stage"; label: string }
   | { type: "unreadable" }
   | { type: "summary"; data: HackathonSummary }
-  | { type: "result"; data: StackResult }
+  | { type: "result"; data: StackResult; changed?: string[] } // changed: layer names, on an edit
   | { type: "error"; message: string };

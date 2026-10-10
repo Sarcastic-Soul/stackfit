@@ -51,10 +51,10 @@ function FactCell({ fact }: { fact: Fact }) {
   );
 }
 
-export function StackCard({ layer, index }: { layer: Layer; index: number }) {
+export function StackCard({ layer, index, updated }: { layer: Layer; index: number; updated: boolean }) {
   return (
     <article
-      className="enter grid border-l-[3px] border-line bg-pane transition-colors hover:border-accent md:grid-cols-[44px_300px_1fr]"
+      className={`enter grid border-l-[3px] bg-pane transition-colors hover:border-accent md:grid-cols-[44px_300px_1fr] ${updated ? "border-accent" : "border-line"}`}
       style={{ animationDelay: `${index * 50}ms` }}
       aria-label={`${layer.layer}: ${layer.pick}`}
     >
@@ -65,6 +65,7 @@ export function StackCard({ layer, index }: { layer: Layer; index: number }) {
         <div className="flex items-start gap-3.5">
           <BrandIcons icons={layer.icons} size={30} className="text-ink" />
           <div className="min-w-0">
+            {updated && <p className="mb-1 font-mono text-xs text-accent">updated</p>}
             <h3 className="font-display text-lg leading-tight font-bold tracking-[-0.04em]">{layer.pick}</h3>
             <p className="mt-1.5 flex items-center gap-1.5 font-mono text-xs text-dim">
               not
