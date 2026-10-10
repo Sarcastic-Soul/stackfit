@@ -99,3 +99,27 @@ export async function fetchPage(rawUrl: string): Promise<PageResult> {
     return { ok: false, reason: err instanceof Error ? err.message : String(err) };
   }
 }
+
+// Backup for sites that block cloud servers (Devpost answers 403 to Vercel):
+// Exa's crawler fetches the page text instead. Same safety check first.
+export async function fetchViaExa(rawUrl: string): Promise<PageResult> {
+  const key = process.env.EXA_API_KEY;
+  if (!key) return { ok: false, reason: "no EXA_API_KEY" };
+  const url = new URL(rawUrl);
+  await assertSafe(url);
+  try {
+    const res = await fetch("https://api.exa.ai/contents", {
+      method: "POST",
+      signal: AbortSignal.timeout(20_000),
+      headers: { "content-type": "application/json", "x-api-key": key },
+      body: JSON.stringify({ urls: [url.toString()], text: { maxCharacters: MAX_CHARS } }),
+    });
+    if (!res.ok) return { ok: false, reason: `exa status ${res.status}` };
+    const data = (await res.json()) as { results?: { url?: string; text?: string }[] };
+    const text = (data.results?.[0]?.text ?? "").trim().slice(0, MAX_CHARS);
+    if (text.length < MIN_CHARS) return { ok: false, reason: "exa: too little text" };
+    return { ok: true, text, url: url.toString() };
+  } catch (err) {
+    return { ok: false, reason: err instanceof Error ? err.message : String(err) };
+  }
+}

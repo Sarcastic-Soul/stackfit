@@ -1,8 +1,8 @@
 // Summary + idea -> the lightest free stack, one Layer per needed layer.
 // One Gemini call, no tools. Facts are filled in later by checkFacts.
-import { generate } from "./gemini";
-import { resolveIcons } from "./icons";
-import type { HackathonSummary, Layer, StackResult } from "./types";
+import { generate } from "./gemini.js";
+import { resolveIcons } from "./icons.js";
+import type { HackathonSummary, Layer, StackResult } from "./types.js";
 
 const layerSchema = {
   type: "object",

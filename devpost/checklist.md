@@ -69,7 +69,7 @@ Build mode: fast
   Learner check: Click "Copy as prompt", paste it into Claude Code or another agent, and see whether it runs the same process.
   Commit: `Add copy-as-prompt export`
 
-- [ ] **7. StackFit is live on Vercel**
+- [x] **7. StackFit is live on Vercel**
   Becomes usable: A public Vercel URL runs the full journey.
   Why now: The live link is the learner's choice for sharing; Vercel wiring of Vite + Hono is still unverified, so it gets its own verified step.
   PRD ref: `prd.md > The Core Journey`
@@ -108,3 +108,4 @@ Activity mode:
 - 10 Oct 2026, after slice 3 hands-on check: Learner found the first visit looked empty and asked for a visual explainer (less text) and an auto-scroll to the finished stack. Added `HowItWorks` (flow track plus an example bar that explains the tags), shown until a summary loads, and a scroll to the result that respects reduced motion.
 - 10 Oct 2026, slice 5: Edits go to the same `/api/stack` route with `previous` and `edits`; the picker returns only changed layers and the server keeps the rest byte-identical. Refine prompt keeps `usualDefault` as the usual AI suggestion (not the old pick) and keeps the why lines about the tool, after a test run showed "Chosen by the user in swaps." Spec updated (`The Core Journey`, `Edit panel`, `Stack picker`).
 - 10 Oct 2026, slice 6: The copy button sits next to "Edit picks" (`web/src/components/CopyPrompt.tsx`); it also gives the current picks as a starting point. Picker and prompt now rule out deprecated tools, after a test run picked Lucia Auth (deprecated in 2025).
+- 10 Oct 2026, slice 7: Live at https://stackfit-psi.vercel.app. Server code moved from `api/` to `server/` so Vercel builds one function (`api/[[...route]].ts`), and relative imports got `.js` endings because Vercel runs the compiled files as plain Node ESM. Devpost returns 403 to Vercel's servers, so the page reader now falls back to Exa's contents API before asking for pasted text. Live check: full run 7.1s, edit 3.3s with only the swapped layer rechecked.

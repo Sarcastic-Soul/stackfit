@@ -1,6 +1,6 @@
 // Page text -> HackathonSummary, in one Gemini call (no tools).
-import { generate } from "./gemini";
-import type { HackathonSummary } from "./types";
+import { generate } from "./gemini.js";
+import type { HackathonSummary } from "./types.js";
 
 const schema = {
   type: "object",

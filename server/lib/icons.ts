@@ -1,7 +1,7 @@
 // Brand icons from the simple-icons package, looked up by slug on the server
 // so the page only receives the few SVG paths it draws.
 import * as simpleIcons from "simple-icons";
-import type { Icon } from "./types";
+import type { Icon } from "./types.js";
 
 type SimpleIcon = { title: string; slug: string; path: string };
 

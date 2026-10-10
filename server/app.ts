@@ -2,12 +2,12 @@
 // (see StreamEvent in lib/types.ts) so the page can show stages live.
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
-import { checkAll } from "./lib/checkFacts";
-import { fetchPage, UnsafeUrlError } from "./lib/fetchPage";
-import { isQuotaError } from "./lib/gemini";
-import { pickStack, refineStack, type Edits } from "./lib/pickStack";
-import { readHackathon } from "./lib/readHackathon";
-import type { HackathonSummary, Layer, StackResult, StreamEvent } from "./lib/types";
+import { checkAll } from "./lib/checkFacts.js";
+import { fetchPage, fetchViaExa, UnsafeUrlError } from "./lib/fetchPage.js";
+import { isQuotaError } from "./lib/gemini.js";
+import { pickStack, refineStack, type Edits } from "./lib/pickStack.js";
+import { readHackathon } from "./lib/readHackathon.js";
+import type { HackathonSummary, Layer, StackResult, StreamEvent } from "./lib/types.js";
 
 export const app = new Hono().basePath("/api");
 
@@ -70,8 +70,13 @@ app.post("/hackathon", async (c) => {
     }
     if (typeof body.url !== "string" || !body.url) throw new InputError("Paste a hackathon link first.");
     await send({ type: "stage", label: "Fetching page" });
-    const page = await fetchPage(body.url);
+    let page = await fetchPage(body.url);
     if (!page.ok) {
+      console.warn(`[hackathon] direct fetch failed for ${body.url}: ${page.reason}`);
+      page = await fetchViaExa(body.url);
+    }
+    if (!page.ok) {
+      console.warn(`[hackathon] unreadable ${body.url}: ${page.reason}`);
       await send({ type: "unreadable" });
       return;
     }

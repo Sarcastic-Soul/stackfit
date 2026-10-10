@@ -54,7 +54,8 @@ Tradeoff accepted: Next.js would bundle the page and API routes together for fre
 ## Where It Runs and How Someone Tries It
 - **Local:** `bun install`, put `GEMINI_API_KEY=...` in `.env` (git-ignored; `.env.example` committed), then `bun run dev`. That starts Vite on http://localhost:5173 and the Hono API on http://localhost:8787 in one command; Vite forwards `/api/*` to the API. Open http://localhost:5173.
 - **Requirements:** bun 1.3+, a Gemini API key (free tier).
-- **Deploy (learner's choice):** Vercel Hobby, connected to the public GitHub repo. Set `GEMINI_API_KEY` in the Vercel project's environment variables. Every push to `main` redeploys.
+- **Live:** https://stackfit-psi.vercel.app
+- **Deploy (learner's choice):** Vercel Hobby, connected to the public GitHub repo (https://github.com/Sarcastic-Soul/stackfit). Set `GEMINI_API_KEY` in the Vercel project's environment variables. Every push to `main` redeploys.
 - **Demo recording:** use the live Vercel URL with a real Devpost hackathon link (for example this hackathon, https://learn-ai-basics.devpost.com/) and a real idea, then do one edit. The submission also needs the public GitHub repo; the live link is extra.
 
 ## Look and Feel
@@ -117,7 +118,7 @@ Calls an API endpoint and reads the newline-delimited JSON response line by line
 The Hono app with two `POST` routes. Each streams newline-delimited JSON events (see `Data Model > Stream events`).
 
 ### Page reader (`server/lib/fetchPage.ts`)
-Fetches the hackathon URL with a 10s timeout, strips scripts, styles, and tags to plain text, and caps the text at about 30k characters. It reports `unreadable` when the request fails, the status isn't 200, or under about 500 characters of text are left (typical of JS-only sites). Safety: it only allows `http`/`https` and refuses localhost and private network addresses.
+Fetches the hackathon URL with a 10s timeout, strips scripts, styles, and tags to plain text, and caps the text at about 30k characters. It reports `unreadable` when the request fails, the status isn't 200, or under about 500 characters of text are left (typical of JS-only sites). Before giving up it tries Exa's contents API (`fetchViaExa`), because some sites block cloud servers: Devpost answers 403 to Vercel. Only if that also fails does the page show the paste box. Safety: it only allows `http`/`https` and refuses localhost and private network addresses.
 PRD ref: `prd.md > Features and Behavior > Hackathon link`, `prd.md > Features and Behavior > Unreadable link fallback`.
 
 ### Hackathon reader (`server/lib/readHackathon.ts`)

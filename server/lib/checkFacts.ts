@@ -3,8 +3,8 @@
 // 2. If none of those pages could be read, Exa finds pages and Gemini reads their text.
 // Tags are set here in code, not by the model: a fact is only "verified" when it
 // states a number and at least one source is on the provider's own domain.
-import { generate, isQuotaError } from "./gemini";
-import type { Fact, Layer, Source } from "./types";
+import { generate, isQuotaError } from "./gemini.js";
+import type { Fact, Layer, Source } from "./types.js";
 
 const LOOKUP_TIMEOUT_MS = 40_000;
 const AT_ONCE = 2; // stays under the free tier's per-minute limits

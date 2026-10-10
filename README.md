@@ -22,6 +22,8 @@ Open http://localhost:5173. Vite serves the page and forwards `/api/*` to the Ho
 
 ## Deploy to Vercel
 
+Live at https://stackfit-psi.vercel.app.
+
 The repo is set up for Vercel as it is: `vercel.json` builds the page into `dist/`, and `api/[[...route]].ts` sends every `/api/*` request to the Hono app in `server/`. Set `GEMINI_API_KEY` (and optionally `EXA_API_KEY`) in the project's environment variables, then deploy.
 
 ## How it's built
