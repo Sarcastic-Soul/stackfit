@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { HackathonSummary, StackResult } from "../../api/lib/types";
 import { EditPanel, type Edits } from "./components/EditPanel";
+import { CopyPrompt } from "./components/CopyPrompt";
 import { ErrorLine } from "./components/ErrorLine";
 import { HowItWorks } from "./components/HowItWorks";
 import { LinkInput } from "./components/LinkInput";
@@ -9,6 +10,7 @@ import { StackView } from "./components/StackView";
 import { StageLog } from "./components/StageLog";
 import { SummaryAndIdea } from "./components/SummaryAndIdea";
 import { useRun } from "./hooks/useRun";
+import { buildPrompt } from "./lib/prompt";
 
 export function App() {
   const hackathon = useRun();
@@ -102,7 +104,10 @@ export function App() {
           {result && (
             <>
               <StackView result={result} changed={changed} />
-              <EditPanel result={result} busy={stack.busy} onSubmit={refineStack} />
+              <div className="flex flex-wrap gap-2.5 pt-4">
+                <EditPanel result={result} busy={stack.busy} onSubmit={refineStack} />
+                {summary && <CopyPrompt getText={() => buildPrompt(summary, idea, result)} />}
+              </div>
             </>
           )}
         </div>

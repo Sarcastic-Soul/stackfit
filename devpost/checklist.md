@@ -59,7 +59,7 @@ Build mode: fast
   Learner check: Swap two picks and add a past tool (e.g. "Prisma, Render"). Only the cards you touched (or that your past tools changed) should update.
   Commit: `Refine stack with edits and past tools`
 
-- [ ] **6. Copy the whole flow as a prompt**
+- [x] **6. Copy the whole flow as a prompt**
   Becomes usable: A "Copy as prompt" button copies a self-contained prompt for any AI agent, then shows "Copied".
   Why now: Small and independent; it closes the PRD's journey.
   PRD ref: `prd.md > The Core Journey` (step 8), `prd.md > Features and Behavior > Copy as prompt`
@@ -107,3 +107,4 @@ Activity mode:
 - 10 Oct 2026, slice 3: Each layer now has a `kind` (service or library), because free tier questions don't fit frameworks like Vite; libraries get license, install weight and speed facts, read from their docs and npm pages. Docs URLs off the official domain are dropped before lookup, so a redirect on an official link (vitejs.dev to vite.dev) can still be verified. Picker prompt now says services need a no-card free tier and that build-only tools (Claude Code, Git) aren't runtime layers, after test runs picked Claude API and Express on Render. Spec updated (`Data Model`, `Live fact checker`).
 - 10 Oct 2026, after slice 3 hands-on check: Learner found the first visit looked empty and asked for a visual explainer (less text) and an auto-scroll to the finished stack. Added `HowItWorks` (flow track plus an example bar that explains the tags), shown until a summary loads, and a scroll to the result that respects reduced motion.
 - 10 Oct 2026, slice 5: Edits go to the same `/api/stack` route with `previous` and `edits`; the picker returns only changed layers and the server keeps the rest byte-identical. Refine prompt keeps `usualDefault` as the usual AI suggestion (not the old pick) and keeps the why lines about the tool, after a test run showed "Chosen by the user in swaps." Spec updated (`The Core Journey`, `Edit panel`, `Stack picker`).
+- 10 Oct 2026, slice 6: The copy button sits next to "Edit picks" (`web/src/components/CopyPrompt.tsx`); it also gives the current picks as a starting point. Picker and prompt now rule out deprecated tools, after a test run picked Lucia Auth (deprecated in 2025).

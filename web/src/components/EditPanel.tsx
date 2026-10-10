@@ -48,7 +48,7 @@ export function EditPanel({ result, busy, onSubmit }: Props) {
         type="button"
         onClick={openPanel}
         aria-disabled={busy}
-        className="mt-5 flex items-center gap-2 border border-line px-3.5 py-2.5 font-mono text-[13px] font-medium text-ink transition-colors hover:border-accent hover:text-accent active:translate-y-px aria-disabled:opacity-60"
+        className="flex items-center gap-2 border border-line px-3.5 py-2.5 font-mono text-[13px] font-medium text-ink transition-colors hover:border-accent hover:text-accent active:translate-y-px aria-disabled:opacity-60"
       >
         <PencilSimpleIcon size={15} aria-hidden />
         Edit picks
@@ -57,7 +57,7 @@ export function EditPanel({ result, busy, onSubmit }: Props) {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="enter mt-5 border border-line bg-pane p-5" aria-label="Edit picks">
+    <form onSubmit={submit} noValidate className="enter w-full border border-line bg-pane p-5" aria-label="Edit picks">
       <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
         {result.layers.map((layer) => {
           const changed = (picks[layer.layer] ?? "").trim() !== layer.pick;
