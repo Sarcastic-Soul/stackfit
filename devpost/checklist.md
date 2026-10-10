@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Add your free Exa key to `.env`, run `bun run check:gemini`, and look at which models worked, which page they read, and which links Exa returned.
   Commit: `Prove free live facts with Gemini URL context and Exa`
 
-- [ ] **2. Paste a hackathon link and see what limits your stack**
+- [x] **2. Paste a hackathon link and see what limits your stack**
   Becomes usable: The app runs locally. You paste a public Devpost link, watch the stage log tick through, and see the hackathon summary (required/sponsor tech, live link needed, platform, notes), styled in the agreed terminal look.
   Why now: First real end-to-end path (page → API → Gemini → streamed stages → screen). It sets up the scaffold, streaming, and the visual direction every later slice reuses.
   PRD ref: `prd.md > The Core Journey` (steps 1–4), `prd.md > Features and Behavior > Hackathon link`, `prd.md > Screens and Layout`, `prd.md > Look and Feel`
@@ -103,3 +103,4 @@ Activity mode:
 ## Revisions
 
 - 10 Oct 2026, slice 1: Live facts now use Gemini's URL context tool on official pricing pages, with Exa search as the backup, instead of Google Search grounding. The check showed grounding returns 429 on the free key and Gemini 2.5 models are closed to new users, while URL context works free and combines with JSON output. Model: `gemini-3.5-flash-lite` (about 2s), with `gemini-3.8-flash` as a retry on 503. Learner approved. Spec updated (`Stack`, `Live fact checker`, `Data Model`, `External Services`, `Decisions`).
+- 10 Oct 2026, slice 2: Learner picked design option 5 ("The stack", graphite plus soft green) after a second round of options (first round had no layout they liked; they liked option 3's colors). Learner also asked for brand icons on each pick: added Simple Icons (resolved on the server from the `simple-icons` package) to `spec.md > Look and Feel`, `Data Model` and `Stack picker`. Icons ship in slice 3 with the stack cards.

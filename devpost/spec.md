@@ -68,6 +68,14 @@ From `prd.md > Look and Feel`. Final details come from the learner's `design-gua
 - Phosphor icons only.
 - Interface copy is short and direct, like a CLI tool.
 
+**Chosen direction (build step 2, learner picked `design-options/option-5.html` "The stack"):**
+- Dark only. Graphite background `#1b1b19`, panels `#222220`, lines `#3a3a36`, text `#e8e6df`, muted `#8f8c82`, one accent: soft green `#8fcf8a`. Square corners everywhere.
+- Fonts: Martian Mono (wordmark, pick names), Geist (body), Geist Mono (data, stage log, tags). Served from the app via `@fontsource-variable/*`, no Google Fonts link.
+- Hero: big two-line `stack / fit` wordmark on the left; the one-line description and link input on the right.
+- Below: one status line (current stage, idea, hackathon limits), then the stack drawn as full-width bars, one per layer, with the layer name written sideways on the left edge. Each bar: brand icon(s), pick, "not <default>" with the default's icon, the reason, then the facts side by side with source link and tag. A footer strip shows tag counts.
+- Brand icons (learner request after seeing the options): from Simple Icons, drawn in one color (text color for picks, muted for defaults). A Phosphor cube icon stands in when a brand isn't in Simple Icons (e.g. OpenAI).
+- Motion: CSS only (stage line spinner, a short fade when bars appear), turned off under `prefers-reduced-motion`. No animation library, to keep the page light.
+
 ## Components
 
 ### Page shell and flow (`web/src/App.tsx`)
@@ -117,7 +125,7 @@ One Gemini call (no search) on the page text, returning a `HackathonSummary` as 
 PRD ref: `prd.md > Features and Behavior > Hackathon link`.
 
 ### Stack picker (`api/lib/pickStack.ts`)
-One Gemini call (no search). Input: summary, idea, optional past tools and swapped picks. Output: the inferred needs plus one `Layer` per needed layer (pick, default, why, whyBeatsDefault). On an edit it receives the previous result, keeps unchanged layers as they are, and returns which layers changed. The prompt tells it to prefer the lightest tool that meets the needs, respect sponsor-required tech, and favor free tiers that don't sleep or pause when a live link is needed.
+One Gemini call (no search). Input: summary, idea, optional past tools and swapped picks. Output: the inferred needs plus one `Layer` per needed layer (pick, default, why, whyBeatsDefault, official domain and docs URLs, and Simple Icons slugs for the pick and the default). The server looks each slug up in the `simple-icons` package and sends only the matching SVG paths; an unknown slug gives no icon (the page shows the fallback). On an edit it receives the previous result, keeps unchanged layers as they are, and returns which layers changed. The prompt tells it to prefer the lightest tool that meets the needs, respect sponsor-required tech, and favor free tiers that don't sleep or pause when a live link is needed.
 PRD ref: `prd.md > Features and Behavior > Idea description`, `prd.md > Features and Behavior > Stack result`, `prd.md > Features and Behavior > Refine the stack`.
 
 ### Live fact checker (`api/lib/checkFacts.ts`)
@@ -160,8 +168,15 @@ type Layer = {
   why: string;                   // why it fits this idea
   whyBeatsDefault: string;
   officialDomain: string;        // "neon.com"; a "verified" source must be on this domain
+  icons: Icon[];                 // pick's brand icon(s), empty when none found
+  defaultIcons: Icon[];
   docsUrls: string[];            // official pricing or limits page(s) the fact checker reads
   facts: Fact[];                 // limits, local weight, deployed speed
+};
+
+type Icon = {                    // resolved on the server from the simple-icons package
+  title: string;                 // "Neon"
+  path: string;                  // SVG path data, 24x24 viewBox
 };
 
 type StackResult = {

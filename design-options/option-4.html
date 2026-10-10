@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StackFit — Option 4: Session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Martian+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  :root { --bg: #1b1b19; --pane: #222220; --line: #3a3a36; --ink: #e8e6df; --dim: #8f8c82; --accent: #8fcf8a; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.6 "Geist", sans-serif; padding: 56px 16px 96px; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  .step { display: grid; grid-template-columns: 160px minmax(0, 720px); gap: 32px; padding: 32px 0; border-top: 1px solid var(--line); }
+  .step:first-child { border-top: 0; padding-top: 0; }
+  .gut { font: 500 12px "Geist Mono"; color: var(--dim); padding-top: 6px; }
+  .gut b { display: block; font: 700 28px "Martian Mono"; letter-spacing: -.04em; margin-bottom: 4px; color: #6f6d65; }
+  .step.active .gut b { color: var(--accent); }
+  h1 { font: 700 clamp(40px, 7vw, 72px)/.95 "Martian Mono", monospace; letter-spacing: -.06em; }
+  h1 span { color: var(--accent); }
+  .lede { color: var(--dim); font-size: 18px; margin-top: 16px; max-width: 52ch; }
+  .field { display: flex; margin-top: 28px; border: 1px solid var(--line); background: var(--pane); }
+  .field span { font: 500 14px "Geist Mono"; color: var(--accent); padding: 14px 0 14px 16px; }
+  .field input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--ink); font: 15px "Geist Mono"; padding: 14px 12px; outline: none; }
+  .field button, .send { background: var(--accent); color: var(--bg); border: 0; font: 600 14px "Geist"; padding: 0 18px; display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .log { list-style: none; padding: 0; font: 13px/2 "Geist Mono"; color: var(--dim); }
+  .log li { display: flex; gap: 10px; align-items: center; }
+  .log i { color: var(--accent); }
+  .log li.now { color: var(--ink); }
+  .facts-row { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 18px; font-size: 14px; }
+  .facts-row b { display: block; font: 500 12px "Geist Mono"; color: var(--dim); }
+  .idea { margin-top: 18px; background: var(--pane); border-left: 2px solid var(--accent); padding: 14px 16px; font-size: 15px; }
+  .layer { display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 24px 0; border-top: 1px dashed var(--line); }
+  .layer:first-of-type { border-top: 0; padding-top: 4px; }
+  .icons { display: flex; flex-direction: column; gap: 6px; }
+  .ic { width: 56px; height: 56px; border: 1px solid var(--line); display: grid; place-items: center; background: var(--pane); }
+  .ic img { width: 28px; height: 28px; }
+  .ic.half { width: 56px; height: 25px; } .ic.half img { width: 16px; height: 16px; }
+  .lname { font: 500 12px "Geist Mono"; color: var(--accent); }
+  .pick { font: 700 24px/1.15 "Martian Mono"; letter-spacing: -.04em; margin-top: 2px; }
+  .vs { display: flex; align-items: center; gap: 8px; font: 13px "Geist Mono"; color: var(--dim); margin-top: 6px; }
+  .vs img { width: 14px; height: 14px; opacity: .7; }
+  .vs s { text-decoration-color: var(--dim); }
+  .why { color: var(--dim); margin-top: 10px; max-width: 60ch; }
+  .facts { margin-top: 14px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .fact { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); font: 13px "Geist Mono"; }
+  .fact a { display: block; color: var(--dim); font-size: 12px; }
+  .tag { font: 500 12px "Geist Mono"; padding: 1px 7px; height: fit-content; white-space: nowrap; display: inline-flex; gap: 4px; align-items: center; }
+  .tag.v { background: var(--accent); color: var(--bg); }
+  .tag.g { border: 1px solid var(--dim); }
+  .tag.n { border: 1px dashed var(--dim); color: var(--dim); }
+  .actions { display: flex; gap: 10px; margin-top: 24px; }
+  .btn { background: transparent; border: 1px solid var(--line); color: var(--ink); font: 500 13px "Geist Mono"; padding: 10px 14px; display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 760px) { .step { grid-template-columns: 1fr; gap: 12px; } .gut b { display: inline; font-size: 18px; margin-right: 8px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="step">
+    <div class="gut"></div>
+    <div>
+      <h1>stack<span>fit</span></h1>
+      <p class="lede">The lightest free stack for your hackathon idea. Every limit read live from the provider's own page, with the link.</p>
+      <form class="field" onsubmit="return false"><span>$</span><input value="https://learn-ai-basics.devpost.com/" aria-label="Hackathon link"><button><i class="ph ph-arrow-right"></i> Read</button></form>
+    </div>
+  </section>
+
+  <section class="step">
+    <div class="gut"><b>01</b>hackathon</div>
+    <div>
+      <ul class="log">
+        <li><i class="ph ph-check"></i>Fetching page</li>
+        <li><i class="ph ph-check"></i>Reading the rules</li>
+      </ul>
+      <div class="facts-row">
+        <div><b>required tech</b>None</div><div><b>live link</b>Optional</div><div><b>platform</b>Web or mobile</div>
+      </div>
+      <div class="idea">Turn lecture voice notes into short study cards.</div>
+    </div>
+  </section>
+
+  <section class="step active">
+    <div class="gut"><b>02</b>stack</div>
+    <div>
+      <ul class="log" style="margin-bottom:18px">
+        <li><i class="ph ph-check"></i>Choosing the lightest stack</li>
+        <li class="now"><i class="ph ph-circle-notch"></i>Checking live limits: Gemini (4 of 4)</li>
+      </ul>
+
+      <article class="layer">
+        <div class="icons"><div class="ic half"><img src="https://cdn.simpleicons.org/vite/e8e6df" alt=""></div><div class="ic half"><img src="https://cdn.simpleicons.org/react/e8e6df" alt=""></div></div>
+        <div>
+          <div class="lname">frontend</div><div class="pick">Vite + React</div>
+          <div class="vs">instead of <img src="https://cdn.simpleicons.org/nextdotjs/8f8c82" alt=""><s>Next.js</s></div>
+          <p class="why">No server rendering needed. Dev server idles near 150 MB.</p>
+          <div class="facts">
+            <div class="fact"><span>Static deploy, no function time<a href="#">vercel.com/docs</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+            <div class="fact"><span>Cold start ~0 ms<a href="#">vite.dev/guide</a></span><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="layer">
+        <div class="icons"><div class="ic"><img src="https://cdn.simpleicons.org/hono/e8e6df" alt=""></div></div>
+        <div>
+          <div class="lname">backend</div><div class="pick">Hono on Vercel</div>
+          <div class="vs">instead of <img src="https://cdn.simpleicons.org/express/8f8c82" alt=""><s>Express on Render</s></div>
+          <p class="why">No sleep after 15 minutes idle, and the demo link answers at once.</p>
+          <div class="facts">
+            <div class="fact"><span>Function max run 300 s (Hobby)<a href="#">vercel.com/docs/functions/limitations</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="layer">
+        <div class="icons"><div class="ic"><img src="https://cdn.simpleicons.org/neon/e8e6df" alt=""></div></div>
+        <div>
+          <div class="lname">database</div><div class="pick">Neon Postgres</div>
+          <div class="vs">instead of <img src="https://cdn.simpleicons.org/supabase/8f8c82" alt=""><s>Supabase</s></div>
+          <p class="why">100 free projects and no weekly pause, so the demo link stays up.</p>
+          <div class="facts">
+            <div class="fact"><span>1 GB storage per project<a href="#">neon.com/pricing</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+            <div class="fact"><span>100 CU-hours / month<a href="#">neon.com/pricing</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+            <div class="fact"><span>Cold start after idle<a href="#">neon.com/docs</a></span><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="layer">
+        <div class="icons"><div class="ic"><img src="https://cdn.simpleicons.org/googlegemini/e8e6df" alt=""></div></div>
+        <div>
+          <div class="lname">llm</div><div class="pick">Gemini 3.5 Flash-Lite</div>
+          <div class="vs">instead of <i class="ph ph-cube"></i><s>GPT-4o</s></div>
+          <p class="why">Free key, about 2 s per call.</p>
+          <div class="facts">
+            <div class="fact"><span>Requests per day<a href="#">ai.google.dev/pricing</a></span><span class="tag n"><i class="ph ph-minus"></i>not found</span></div>
+          </div>
+        </div>
+      </article>
+
+      <div class="actions">
+        <button class="btn"><i class="ph ph-pencil-simple"></i>Edit picks</button>
+        <button class="btn"><i class="ph ph-copy"></i>Copy as prompt</button>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

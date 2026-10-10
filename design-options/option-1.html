@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StackFit — Option 1: Departure board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  :root {
+    --bg: #15140f; --panel: #1d1c16; --line: #34322a; --ink: #ece6d6; --dim: #9a937f;
+    --accent: #f2a93b; --ok: #e9e2cf; --vague: #c9c1aa; --none: #8a836f;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.55 "Space Grotesk", sans-serif; padding: 40px 16px 80px; }
+  .wrap { max-width: 1120px; margin: 0 auto; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px; border-bottom: 2px solid var(--accent); padding-bottom: 20px; }
+  h1 { font-size: clamp(44px, 8vw, 88px); line-height: .9; letter-spacing: -.03em; font-weight: 700; }
+  h1 span { color: var(--accent); }
+  .lede { max-width: 440px; color: var(--dim); font-size: 17px; }
+  .clock { font-family: "JetBrains Mono", monospace; color: var(--accent); font-size: 13px; text-align: right; }
+  form { margin: 28px 0 36px; display: flex; border: 1px solid var(--line); background: var(--panel); }
+  form label { padding: 16px 18px; color: var(--accent); font: 500 13px "JetBrains Mono", monospace; border-right: 1px solid var(--line); white-space: nowrap; }
+  form input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--ink); font: 15px "JetBrains Mono", monospace; padding: 0 16px; outline: none; }
+  form button { background: var(--accent); color: #15140f; border: 0; font: 700 14px "Space Grotesk"; padding: 0 22px; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+  .cols { display: grid; grid-template-columns: 320px 1fr; gap: 32px; }
+  h2 { font: 500 12px "JetBrains Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+  .log { font: 13px/1.9 "JetBrains Mono", monospace; }
+  .log li { list-style: none; display: grid; grid-template-columns: 44px 1fr; color: var(--dim); }
+  .log li b { color: var(--accent); font-weight: 500; }
+  .log li.now { color: var(--ink); }
+  .summary { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 16px; font-size: 14px; }
+  .summary dt { color: var(--dim); font: 12px "JetBrains Mono", monospace; margin-top: 10px; }
+  .board { border: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: 110px 1fr 1fr; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row.head { background: var(--panel); font: 500 12px "JetBrains Mono", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .row > div { padding: 14px 16px; }
+  .layer { font: 500 12px "JetBrains Mono", monospace; color: var(--accent); text-transform: uppercase; }
+  .pick { font-size: 22px; font-weight: 700; line-height: 1.1; }
+  .instead { color: var(--dim); font-size: 13px; margin-top: 4px; }
+  .instead s { color: var(--none); }
+  .why { color: var(--dim); font-size: 13px; margin-top: 8px; max-width: 34ch; }
+  .facts { font: 13px/1.5 "JetBrains Mono", monospace; display: grid; gap: 8px; }
+  .fact { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; }
+  .fact a { color: var(--dim); font-size: 12px; display: block; }
+  .tag { font: 700 11px "JetBrains Mono", monospace; letter-spacing: .08em; padding: 2px 6px; text-transform: uppercase; white-space: nowrap; }
+  .tag.v { background: var(--accent); color: #15140f; }
+  .tag.g { border: 1px solid var(--vague); color: var(--vague); }
+  .tag.n { border: 1px dashed var(--none); color: var(--none); }
+  .actions { display: flex; gap: 12px; margin-top: 16px; }
+  .btn { border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 13px "JetBrains Mono", monospace; padding: 10px 14px; display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 820px) {
+    header { grid-template-columns: 1fr; } .clock { text-align: left; }
+    .cols { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 1fr; } .row.head { display: none; }
+    form label { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Stack<span>Fit</span></h1>
+      <p class="lede">Paste a hackathon link, describe your idea, get the lightest free stack. Every limit looked up live, with sources.</p>
+    </div>
+    <div class="clock">LIVE LOOKUP<br>10 OCT 2026 · 21:42</div>
+  </header>
+
+  <form onsubmit="return false">
+    <label>HACKATHON</label>
+    <input value="https://learn-ai-basics.devpost.com/" aria-label="Hackathon link">
+    <button><i class="ph ph-arrow-right"></i> Read</button>
+  </form>
+
+  <div class="cols">
+    <aside>
+      <h2>Stages</h2>
+      <ul class="log">
+        <li><b>done</b>Fetching page</li>
+        <li><b>done</b>Reading the rules</li>
+        <li><b>done</b>Working out what your idea needs</li>
+        <li><b>done</b>Choosing the lightest stack</li>
+        <li><b>done</b>Checking live limits: Neon</li>
+        <li class="now"><b>····</b>Checking live limits: Gemini</li>
+      </ul>
+      <dl class="summary">
+        <dt>REQUIRED TECH</dt><dd>None. Any AI coding agent.</dd>
+        <dt>LIVE LINK</dt><dd>Optional. Repo and video required.</dd>
+        <dt>PLATFORM</dt><dd>Web or mobile</dd>
+        <dt>IDEA</dt><dd>Turn lecture voice notes into short study cards.</dd>
+      </dl>
+    </aside>
+
+    <section>
+      <h2>Your stack · 3 layers</h2>
+      <div class="board">
+        <div class="row head"><div>Layer</div><div>Pick</div><div>Free tier, live</div></div>
+        <div class="row">
+          <div class="layer">Frontend</div>
+          <div><div class="pick">Vite + React</div><div class="instead">instead of <s>Next.js</s></div><p class="why">No server rendering needed. Dev server idles near 150 MB.</p></div>
+          <div class="facts">
+            <div class="fact"><span>Static deploy, no function time<a href="#">vercel.com/docs</a></span><span class="tag v">verified</span></div>
+            <div class="fact"><span>Cold start ~0 ms (static)<a href="#">vite.dev/guide</a></span><span class="tag g">vague</span></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="layer">Database</div>
+          <div><div class="pick">Neon Postgres</div><div class="instead">instead of <s>Supabase</s></div><p class="why">100 free projects and no weekly pause, so the demo link stays up.</p></div>
+          <div class="facts">
+            <div class="fact"><span>1 GB storage per project<a href="#">neon.com/pricing</a></span><span class="tag v">verified</span></div>
+            <div class="fact"><span>100 CU-hours / month<a href="#">neon.com/pricing</a></span><span class="tag v">verified</span></div>
+            <div class="fact"><span>Cold start after idle<a href="#">neon.com/docs</a></span><span class="tag g">vague</span></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="layer">LLM</div>
+          <div><div class="pick">Gemini 3.5 Flash-Lite</div><div class="instead">instead of <s>GPT-4o</s></div><p class="why">Free key, about 2 s per call.</p></div>
+          <div class="facts">
+            <div class="fact"><span>Requests per day<a href="#">ai.google.dev/pricing</a></span><span class="tag n">not found</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn"><i class="ph ph-pencil-simple"></i> Edit picks</button>
+        <button class="btn"><i class="ph ph-copy"></i> Copy as prompt</button>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

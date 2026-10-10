@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StackFit — Option 3: Split panes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Martian+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  :root { --bg: #1b1b19; --pane: #222220; --line: #3a3a36; --ink: #e8e6df; --dim: #8f8c82; --accent: #8fcf8a; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.55 "Geist", sans-serif; display: flex; flex-direction: column; }
+  .mono { font-family: "Geist Mono", monospace; }
+  .top { display: flex; align-items: center; gap: 20px; padding: 14px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .brand { font: 700 18px "Martian Mono", monospace; letter-spacing: -.02em; }
+  .brand span { color: var(--accent); }
+  .tagline { color: var(--dim); font-size: 13px; flex: 1; min-width: 200px; }
+  form { display: flex; flex: 1 1 380px; border: 1px solid var(--line); }
+  form input { flex: 1; min-width: 0; background: var(--pane); border: 0; color: var(--ink); font: 13px "Geist Mono"; padding: 10px 12px; outline: none; }
+  form input:focus { box-shadow: inset 0 0 0 1px var(--accent); }
+  form button { background: var(--accent); color: #1b1b19; border: 0; font: 600 13px "Geist"; padding: 0 16px; display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  main { flex: 1; display: grid; grid-template-columns: 340px 1fr; min-height: 0; }
+  .pane { padding: 20px; overflow: auto; }
+  .pane + .pane { border-left: 1px solid var(--line); }
+  .ptitle { font: 500 12px "Geist Mono"; color: var(--dim); margin-bottom: 14px; display: flex; justify-content: space-between; }
+  .log { list-style: none; padding: 0; font: 12.5px/2 "Geist Mono"; }
+  .log li { display: flex; gap: 10px; color: var(--dim); }
+  .log li i { color: var(--accent); }
+  .log li.now { color: var(--ink); }
+  .kv { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 14px; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 13px; }
+  .kv dt { font: 12px "Geist Mono"; color: var(--dim); }
+  .idea { margin-top: 20px; }
+  .idea textarea { width: 100%; background: var(--pane); color: var(--ink); border: 1px solid var(--line); font: 13px/1.5 "Geist"; padding: 10px; resize: vertical; min-height: 72px; }
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .card { background: var(--bg); padding: 18px; }
+  .card.wide { grid-column: span 2; }
+  .lay { font: 500 12px "Geist Mono"; color: var(--accent); }
+  .pick { font: 700 20px/1.2 "Martian Mono", monospace; letter-spacing: -.03em; margin-top: 6px; }
+  .vs { font: 12px "Geist Mono"; color: var(--dim); margin-top: 4px; }
+  .why { color: var(--dim); margin: 10px 0 14px; font-size: 13px; }
+  .fact { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font: 12.5px "Geist Mono"; }
+  .fact a { display: block; color: var(--dim); font-size: 12px; }
+  .tag { font: 500 12px "Geist Mono"; padding: 1px 6px; height: fit-content; white-space: nowrap; display: inline-flex; gap: 4px; align-items: center; }
+  .tag.v { background: var(--accent); color: #1b1b19; }
+  .tag.g { border: 1px solid var(--dim); color: var(--ink); }
+  .tag.n { border: 1px dashed var(--dim); color: var(--dim); }
+  .status { display: flex; gap: 0; border-top: 1px solid var(--line); font: 12px "Geist Mono"; }
+  .status > * { padding: 7px 14px; border-right: 1px solid var(--line); }
+  .status .on { background: var(--accent); color: #1b1b19; }
+  .status button { background: transparent; color: var(--ink); border: 0; font: inherit; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+  .status button:hover { color: var(--accent); }
+  .status .sp { flex: 1; border-right: 0; }
+  @media (max-width: 860px) {
+    html, body { height: auto; } .pane { overflow: visible; } main { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr; } .pane + .pane { border-left: 0; border-top: 1px solid var(--line); }
+    .card.wide { grid-column: auto; } .status { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="brand">stack<span>fit</span></div>
+    <div class="tagline">Lightest free stack for your hackathon idea. Limits checked live, sources shown.</div>
+    <form onsubmit="return false"><input value="https://learn-ai-basics.devpost.com/" aria-label="Hackathon link"><button><i class="ph ph-arrow-right"></i> Read</button></form>
+  </div>
+  <main>
+    <section class="pane">
+      <div class="ptitle"><span>0: progress</span><span>12.4 s</span></div>
+      <ul class="log">
+        <li><i class="ph ph-check"></i>Fetching page</li>
+        <li><i class="ph ph-check"></i>Reading the rules</li>
+        <li><i class="ph ph-check"></i>Choosing the lightest stack</li>
+        <li><i class="ph ph-check"></i>Checking live limits: Neon</li>
+        <li class="now"><i class="ph ph-circle-notch"></i>Checking live limits: Gemini</li>
+      </ul>
+      <dl class="kv">
+        <dt>required</dt><dd>No required tech</dd>
+        <dt>live link</dt><dd>Optional</dd>
+        <dt>platform</dt><dd>Web or mobile</dd>
+      </dl>
+      <div class="idea"><div class="ptitle"><span>your idea</span></div><textarea>Turn lecture voice notes into short study cards.</textarea></div>
+    </section>
+    <section class="pane">
+      <div class="ptitle"><span>1: stack · 3 layers</span><span>verified 3 · vague 2 · not found 1</span></div>
+      <div class="cards">
+        <article class="card">
+          <div class="lay">frontend</div><div class="pick">Vite + React</div><div class="vs">instead of Next.js</div>
+          <p class="why">No server rendering needed. Dev server idles near 150 MB.</p>
+          <div class="fact"><span>Static deploy, no function time<a href="#">vercel.com/docs</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+          <div class="fact"><span>Cold start ~0 ms<a href="#">vite.dev/guide</a></span><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+        </article>
+        <article class="card">
+          <div class="lay">llm</div><div class="pick">Gemini 3.5 Flash-Lite</div><div class="vs">instead of GPT-4o</div>
+          <p class="why">Free key, about 2 s per call.</p>
+          <div class="fact"><span>Requests per day<a href="#">ai.google.dev/pricing</a></span><span class="tag n"><i class="ph ph-minus"></i>not found</span></div>
+        </article>
+        <article class="card wide">
+          <div class="lay">database</div><div class="pick">Neon Postgres</div><div class="vs">instead of Supabase</div>
+          <p class="why">100 free projects and no weekly pause, so the demo link stays up.</p>
+          <div class="fact"><span>1 GB storage per project<a href="#">neon.com/pricing</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+          <div class="fact"><span>100 CU-hours / month<a href="#">neon.com/pricing</a></span><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+          <div class="fact"><span>Cold start after idle<a href="#">neon.com/docs</a></span><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <div class="status">
+    <span class="on">stackfit</span>
+    <button><i class="ph ph-pencil-simple"></i>edit picks</button>
+    <button><i class="ph ph-copy"></i>copy as prompt</button>
+    <span class="sp"></span>
+    <span>nothing saved</span>
+  </div>
+</body>
+</html>

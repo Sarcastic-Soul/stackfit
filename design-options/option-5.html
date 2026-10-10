@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StackFit — Option 5: The stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Martian+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+  :root { --bg: #1b1b19; --pane: #222220; --pane2: #282826; --line: #3a3a36; --ink: #e8e6df; --dim: #8f8c82; --accent: #8fcf8a; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 15px/1.55 "Geist", sans-serif; padding: 40px 16px 96px; }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: end; }
+  h1 { font: 700 clamp(48px, 9vw, 112px)/.85 "Martian Mono", monospace; letter-spacing: -.07em; }
+  h1 span { color: var(--accent); }
+  .lede { color: var(--dim); font-size: 17px; max-width: 46ch; }
+  .field { display: flex; margin-top: 18px; border: 1px solid var(--line); background: var(--pane); }
+  .field input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--ink); font: 14px "Geist Mono"; padding: 14px; outline: none; }
+  .field button { background: var(--accent); color: var(--bg); border: 0; font: 600 14px "Geist"; padding: 0 18px; display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .bar { margin: 44px 0 14px; display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; font: 13px "Geist Mono"; color: var(--dim); }
+  .bar .now { color: var(--ink); display: flex; gap: 8px; align-items: center; }
+  .bar .now i { color: var(--accent); }
+  .bar .meta { margin-left: auto; display: flex; gap: 18px; }
+  .bar .meta b { color: var(--ink); font-weight: 500; }
+  .stack { display: grid; gap: 4px; }
+  .slab { display: grid; grid-template-columns: 44px 300px 1fr; background: var(--pane); border-left: 3px solid var(--line); }
+  .slab:hover { border-left-color: var(--accent); }
+  .slab .lname { writing-mode: vertical-rl; transform: rotate(180deg); font: 500 12px "Geist Mono"; color: var(--accent); letter-spacing: .08em; text-align: center; padding: 16px 0; border-right: 1px solid var(--line); }
+  .head { padding: 20px; display: grid; grid-template-columns: auto 1fr; gap: 14px; align-content: start; border-right: 1px solid var(--line); }
+  .logos { display: flex; gap: 6px; }
+  .logos img { width: 32px; height: 32px; }
+  .pick { font: 700 20px/1.15 "Martian Mono"; letter-spacing: -.04em; }
+  .vs { display: flex; align-items: center; gap: 6px; font: 12px "Geist Mono"; color: var(--dim); margin-top: 6px; }
+  .vs img { width: 13px; height: 13px; opacity: .7; }
+  .why { color: var(--dim); font-size: 13px; margin-top: 10px; grid-column: 1 / -1; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .fact { padding: 18px 20px; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+  .fact:last-child { border-right: 0; }
+  .fact .val { font: 500 15px "Geist Mono"; }
+  .fact a { color: var(--dim); font: 12px "Geist Mono"; }
+  .tag { font: 500 12px "Geist Mono"; padding: 1px 7px; width: fit-content; display: inline-flex; gap: 4px; align-items: center; }
+  .tag.v { background: var(--accent); color: var(--bg); }
+  .tag.g { border: 1px solid var(--dim); }
+  .tag.n { border: 1px dashed var(--dim); color: var(--dim); }
+  .ground { margin-top: 4px; padding: 10px 20px; background: var(--pane2); font: 12px "Geist Mono"; color: var(--dim); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { background: transparent; border: 1px solid var(--line); color: var(--ink); font: 500 13px "Geist Mono"; padding: 10px 14px; display: flex; gap: 8px; align-items: center; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 20px; }
+    .slab { grid-template-columns: 1fr; }
+    .slab .lname { writing-mode: horizontal-tb; transform: none; text-align: left; padding: 10px 20px 0; border-right: 0; }
+    .head { border-right: 0; border-bottom: 1px solid var(--line); }
+    .fact { border-right: 0; border-bottom: 1px solid var(--line); }
+    .bar .meta { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>stack<br><span>fit</span></h1>
+    <div>
+      <p class="lede">Paste a hackathon link, describe your idea, get the lightest free stack. Limits read live from each provider's own page.</p>
+      <form class="field" onsubmit="return false"><input value="https://learn-ai-basics.devpost.com/" aria-label="Hackathon link"><button><i class="ph ph-arrow-right"></i> Read</button></form>
+    </div>
+  </section>
+
+  <div class="bar">
+    <span class="now"><i class="ph ph-circle-notch"></i>Checking live limits: Gemini · 4 of 4</span>
+    <span>"Turn lecture voice notes into short study cards."</span>
+    <span class="meta"><span>required <b>none</b></span><span>live link <b>optional</b></span><span>platform <b>web</b></span></span>
+  </div>
+
+  <div class="stack">
+    <article class="slab">
+      <div class="lname">FRONTEND</div>
+      <div class="head">
+        <div class="logos"><img src="https://cdn.simpleicons.org/vite/e8e6df" alt=""><img src="https://cdn.simpleicons.org/react/e8e6df" alt=""></div>
+        <div><div class="pick">Vite + React</div><div class="vs">not <img src="https://cdn.simpleicons.org/nextdotjs/8f8c82" alt="">Next.js</div></div>
+        <p class="why">No server rendering needed. Dev server idles near 150 MB.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="val">Static, no function time</span><a href="#">vercel.com/docs</a><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+        <div class="fact"><span class="val">Cold start ~0 ms</span><a href="#">vite.dev/guide</a><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+      </div>
+    </article>
+    <article class="slab">
+      <div class="lname">BACKEND</div>
+      <div class="head">
+        <div class="logos"><img src="https://cdn.simpleicons.org/hono/e8e6df" alt=""></div>
+        <div><div class="pick">Hono on Vercel</div><div class="vs">not <img src="https://cdn.simpleicons.org/express/8f8c82" alt="">Express on Render</div></div>
+        <p class="why">No sleep after 15 minutes idle.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="val">300 s max run (Hobby)</span><a href="#">vercel.com/docs/functions</a><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+      </div>
+    </article>
+    <article class="slab">
+      <div class="lname">DATABASE</div>
+      <div class="head">
+        <div class="logos"><img src="https://cdn.simpleicons.org/neon/e8e6df" alt=""></div>
+        <div><div class="pick">Neon Postgres</div><div class="vs">not <img src="https://cdn.simpleicons.org/supabase/8f8c82" alt="">Supabase</div></div>
+        <p class="why">100 free projects, no weekly pause.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="val">1 GB / project</span><a href="#">neon.com/pricing</a><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+        <div class="fact"><span class="val">100 CU-hours / month</span><a href="#">neon.com/pricing</a><span class="tag v"><i class="ph ph-seal-check"></i>verified</span></div>
+        <div class="fact"><span class="val">Cold start after idle</span><a href="#">neon.com/docs</a><span class="tag g"><i class="ph ph-question"></i>vague</span></div>
+      </div>
+    </article>
+    <article class="slab">
+      <div class="lname">LLM</div>
+      <div class="head">
+        <div class="logos"><img src="https://cdn.simpleicons.org/googlegemini/e8e6df" alt=""></div>
+        <div><div class="pick">Gemini 3.5 Flash-Lite</div><div class="vs">not <i class="ph ph-cube"></i>GPT-4o</div></div>
+        <p class="why">Free key, about 2 s per call.</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><span class="val">Requests per day</span><a href="#">ai.google.dev/pricing</a><span class="tag n"><i class="ph ph-minus"></i>not found</span></div>
+      </div>
+    </article>
+  </div>
+  <div class="ground"><span>4 layers · verified 4 · vague 2 · not found 1</span><span>nothing saved · refresh starts over</span></div>
+
+  <div class="actions">
+    <button class="btn"><i class="ph ph-pencil-simple"></i>Edit picks</button>
+    <button class="btn"><i class="ph ph-copy"></i>Copy as prompt</button>
+  </div>
+</div>
+</body>
+</html>
