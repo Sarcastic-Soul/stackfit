@@ -1,0 +1,16 @@
+{
+  "name": "stackfit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check:gemini": "bun scripts/check-gemini.ts"
+  },
+  "dependencies": {
+    "@google/genai": "2.28.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.2",
+    "typescript": "^7.0.2"
+  }
+}
