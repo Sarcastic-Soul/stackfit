@@ -138,6 +138,8 @@ Tag rules, enforced in code after the model answers:
 - **vague:** found but only on third-party pages, conflicting, or not stated as a number.
 - **not found:** no answer or no sources.
 
+Which facts: for a **service** (hosting, database, LLM API), free tier limits, whether it sleeps or needs a card, and deployed speed. For a **library** (framework, router), cost and license, local weight (install size, dependencies), and speed. The stack picker only keeps docs URLs on the official domain (for a library, also its npmjs.com or github.com page), so a page read through URL context counts as the provider's own site even after a redirect (for example vitejs.dev to vite.dev). Exa results count as official only when on the official domain. Facts the pages don't mention are dropped; if nothing is found the card shows one `not found` fact.
+
 A fact with no source URL can never be `verified`. Runs at most 2 lookups at once to stay under free tier per-minute limits. Streams "Checking live limits: <service>" before each one.
 PRD ref: `prd.md > Features and Behavior > Live facts with confidence tags`, `prd.md > States and Boundaries > Lookup failed or unclear`.
 
@@ -164,6 +166,7 @@ type Fact = {
 type Layer = {
   layer: string;                 // "frontend", "backend", "database", "hosting", "llm", ...
   pick: string;                  // "Vite + React"
+  kind: "service" | "library";   // hosted product with a free tier, or a tool you install
   usualDefault: string;          // "Next.js"
   why: string;                   // why it fits this idea
   whyBeatsDefault: string;

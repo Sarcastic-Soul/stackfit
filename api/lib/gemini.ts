@@ -24,6 +24,11 @@ function isBusy(err: unknown) {
   return msg.includes("503") || msg.includes("UNAVAILABLE");
 }
 
+export function isQuotaError(err: unknown) {
+  const msg = err instanceof Error ? err.message : String(err);
+  return msg.includes("429") || msg.includes("RESOURCE_EXHAUSTED");
+}
+
 // Calls MODEL, and retries once on BACKUP_MODEL if Gemini says it is busy.
 export async function generate(params: Omit<GenerateContentParameters, "model">) {
   try {

@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Open http://localhost:5173, paste a Devpost hackathon link, and check the stages and summary match what you know about that hackathon, and that the look fits what you pictured.
   Commit: `Read a hackathon link into a streamed summary`
 
-- [ ] **3. Describe your idea and get a live-checked stack**
+- [x] **3. Describe your idea and get a live-checked stack**
   Becomes usable: After the summary, you describe an idea and get one card per layer: pick next to the usual AI default, why it fits, why it beats the default, and facts (free tier limits, local weight, deployed speed), each with a verified / vague / not found tag and source links.
   Why now: This is the unique kernel. It comes right after the first path works, so everything after it is refinement.
   PRD ref: `prd.md > The Core Journey` (steps 4–6), `prd.md > Features and Behavior > Idea description`, `prd.md > Features and Behavior > Stack result`, `prd.md > Features and Behavior > Live facts with confidence tags`, `prd.md > States and Boundaries`
@@ -104,3 +104,4 @@ Activity mode:
 
 - 10 Oct 2026, slice 1: Live facts now use Gemini's URL context tool on official pricing pages, with Exa search as the backup, instead of Google Search grounding. The check showed grounding returns 429 on the free key and Gemini 2.5 models are closed to new users, while URL context works free and combines with JSON output. Model: `gemini-3.5-flash-lite` (about 2s), with `gemini-3.8-flash` as a retry on 503. Learner approved. Spec updated (`Stack`, `Live fact checker`, `Data Model`, `External Services`, `Decisions`).
 - 10 Oct 2026, slice 2: Learner picked design option 5 ("The stack", graphite plus soft green) after a second round of options (first round had no layout they liked; they liked option 3's colors). Learner also asked for brand icons on each pick: added Simple Icons (resolved on the server from the `simple-icons` package) to `spec.md > Look and Feel`, `Data Model` and `Stack picker`. Icons ship in slice 3 with the stack cards.
+- 10 Oct 2026, slice 3: Each layer now has a `kind` (service or library), because free tier questions don't fit frameworks like Vite; libraries get license, install weight and speed facts, read from their docs and npm pages. Docs URLs off the official domain are dropped before lookup, so a redirect on an official link (vitejs.dev to vite.dev) can still be verified. Picker prompt now says services need a no-card free tier and that build-only tools (Claude Code, Git) aren't runtime layers, after test runs picked Claude API and Express on Render. Spec updated (`Data Model`, `Live fact checker`).
