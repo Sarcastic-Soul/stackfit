@@ -37,6 +37,20 @@ The repo is set up for Vercel as it is: `vercel.json` builds the page into `dist
 | Live fact checker and tags | `server/lib/checkFacts.ts` |
 | Vercel entry | `api/[[...route]].ts` |
 
+## How it was planned
+
+Built with the [Devpost Learn Skill Pack](https://github.com/challengepost/learn-ai-basics) (`skills-lock.json` records the version). The planning docs are in `devpost/`:
+
+| File | What it holds |
+|---|---|
+| `devpost/scope.md` | The idea, who it's for, and what's in and out of the proof of concept |
+| `devpost/prd.md` | Screens, behavior and edge cases |
+| `devpost/spec.md` | Technical plan: stack, components, data, services |
+| `devpost/checklist.md` | The 7 build slices, each checked by hand, plus a log of plan changes |
+| `devpost/app-map.html` | One-page map of how the code fits together |
+
+`design-options/` holds the six HTML design directions explored before picking the look.
+
 ## License
 
 MIT

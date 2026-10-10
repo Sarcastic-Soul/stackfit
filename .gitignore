@@ -6,3 +6,8 @@ node_modules
 dist
 .impeccable/hook.cache.json
 .vercel
+
+# Local copies of the Devpost Learn Skill Pack (skills-lock.json records the source)
+.agents
+.claude
+agent
