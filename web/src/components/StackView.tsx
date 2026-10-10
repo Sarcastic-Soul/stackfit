@@ -1,4 +1,4 @@
-import type { StackResult } from "../../../api/lib/types";
+import type { StackResult } from "../../../server/lib/types";
 import { StackCard } from "./StackCard";
 
 export function StackView({ result, changed }: { result: StackResult; changed: string[] }) {

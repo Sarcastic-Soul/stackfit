@@ -1,6 +1,6 @@
 // Posts JSON to an API route and hands each newline-delimited JSON event
 // to onEvent as soon as it arrives.
-import type { StreamEvent } from "../../../api/lib/types";
+import type { StreamEvent } from "../../../server/lib/types";
 
 export async function streamEvents(path: string, body: unknown, onEvent: (event: StreamEvent) => void) {
   const res = await fetch(path, {

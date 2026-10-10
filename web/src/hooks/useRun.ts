@@ -1,6 +1,6 @@
 // One streamed API run: its stage log, busy flag, and error line.
 import { useState } from "react";
-import type { StreamEvent } from "../../../api/lib/types";
+import type { StreamEvent } from "../../../server/lib/types";
 import type { Stage } from "../components/StageLog";
 import { streamEvents } from "../lib/stream";
 

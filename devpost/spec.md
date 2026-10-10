@@ -113,22 +113,22 @@ PRD ref: `prd.md > Features and Behavior > Copy as prompt`.
 ### Stream reader (`web/src/lib/stream.ts`)
 Calls an API endpoint and reads the newline-delimited JSON response line by line, handing each event to the page.
 
-### API app (`api/app.ts`)
+### API app (`server/app.ts`)
 The Hono app with two `POST` routes. Each streams newline-delimited JSON events (see `Data Model > Stream events`).
 
-### Page reader (`api/lib/fetchPage.ts`)
+### Page reader (`server/lib/fetchPage.ts`)
 Fetches the hackathon URL with a 10s timeout, strips scripts, styles, and tags to plain text, and caps the text at about 30k characters. It reports `unreadable` when the request fails, the status isn't 200, or under about 500 characters of text are left (typical of JS-only sites). Safety: it only allows `http`/`https` and refuses localhost and private network addresses.
 PRD ref: `prd.md > Features and Behavior > Hackathon link`, `prd.md > Features and Behavior > Unreadable link fallback`.
 
-### Hackathon reader (`api/lib/readHackathon.ts`)
+### Hackathon reader (`server/lib/readHackathon.ts`)
 One Gemini call (no search) on the page text, returning a `HackathonSummary` as JSON.
 PRD ref: `prd.md > Features and Behavior > Hackathon link`.
 
-### Stack picker (`api/lib/pickStack.ts`)
+### Stack picker (`server/lib/pickStack.ts`)
 One Gemini call (no search). Input: summary, idea, optional past tools and swapped picks. Output: the inferred needs plus one `Layer` per needed layer (pick, default, why, whyBeatsDefault, official domain and docs URLs, and Simple Icons slugs for the pick and the default). The server looks each slug up in the `simple-icons` package and sends only the matching SVG paths; an unknown slug gives no icon (the page shows the fallback). On an edit (`refineStack`) it receives the previous result and the edits, and returns only the layers it changes: each swap exactly as typed, a past tool only when it's close to as light and free, and other layers only if a swap breaks them. A swap always wins: if the model skips a swapped layer, the server builds a plain layer for it with no docs links, so its facts come from Exa. The server echoes every other layer back untouched. The prompt tells it to prefer the lightest tool that meets the needs, respect sponsor-required tech, and favor free tiers that don't sleep or pause when a live link is needed.
 PRD ref: `prd.md > Features and Behavior > Idea description`, `prd.md > Features and Behavior > Stack result`, `prd.md > Features and Behavior > Refine the stack`.
 
-### Live fact checker (`api/lib/checkFacts.ts`)
+### Live fact checker (`server/lib/checkFacts.ts`)
 For each new or changed pick, the stack picker has already named the provider's official domain and its pricing or limits page URL(s). Then:
 1. One Gemini call **with the URL context tool**, given those URLs, asks for the current free tier limits, rate limits, local weight, and deployed speed numbers as JSON. Sources are the pages listed as read successfully in `urlContextMetadata`.
 2. If none of the pages could be read (wrong or moved URL, blocked), one **Exa search** (`type: "fast"`, `includeDomains: [official domain]`, about 3 results with page text) finds the right pages. If that returns nothing, a second Exa search runs without the domain filter. Gemini (no tools) reads the returned text and answers in the same JSON. Sources are the Exa result URLs.
@@ -200,9 +200,10 @@ Each line of an API response is one JSON object:
 ```
 project/
 ├── api/
+│   └── [[...route]].ts        # Vercel entry: hands every /api/* request to server/app.ts
+├── server/                    # outside api/ so Vercel doesn't turn each file into a function
 │   ├── app.ts                 # Hono app: POST /api/hackathon, POST /api/stack (streams NDJSON)
 │   ├── dev.ts                 # local-only: runs the Hono app on :8787 with bun
-│   ├── [[...route]].ts        # Vercel entry (or zero-config server.ts; decided in step 1)
 │   └── lib/
 │       ├── fetchPage.ts       # download + strip page, unreadable check, URL safety
 │       ├── gemini.ts          # one shared Gemini client + model choice + JSON helper
@@ -216,7 +217,7 @@ project/
 │       ├── main.tsx
 │       ├── App.tsx            # step state + layout
 │       ├── index.css          # Tailwind + theme tokens
-│       ├── components/        # LinkInput, PasteFallback, StageLog, SummaryAndIdea, StackCard, EditPanel
+│       ├── components/        # LinkInput, PasteFallback, StageLog, SummaryAndIdea, StackCard, EditPanel, CopyPrompt, HowItWorks
 │       └── lib/
 │           ├── stream.ts      # NDJSON reader
 │           └── prompt.ts      # copy-as-prompt text builder
@@ -225,7 +226,7 @@ project/
 ├── devpost/                   # Devpost learning workspace
 ├── .env.example               # GEMINI_API_KEY=, EXA_API_KEY=
 ├── vite.config.ts             # root: web/, proxy /api -> :8787
-├── vercel.json                # only if needed for the Vite + API setup
+├── vercel.json                # build command, dist output, 300s function limit
 ├── package.json
 ├── LICENSE                    # MIT
 └── README.md
@@ -236,14 +237,14 @@ project/
 ### Gemini API
 - **Docs:** https://ai.google.dev/gemini-api/docs · URL context: https://ai.google.dev/gemini-api/docs/url-context · pricing: https://ai.google.dev/gemini-api/docs/pricing · deprecations: https://ai.google.dev/gemini-api/docs/deprecations
 - **Key:** `GEMINI_API_KEY`, free tier (learner has one).
-- **Calls:** `@google/genai` `models.generateContent`, wrapped by `api/lib/gemini.ts`. Plain calls for the hackathon reader and stack picker, JSON output via `responseJsonSchema`. The fact checker passes `tools: [{ urlContext: {} }]` with JSON output, and reads `candidates[0].urlContextMetadata.urlMetadata[]` (`retrievedUrl`, `urlRetrievalStatus` = `URL_RETRIEVAL_STATUS_SUCCESS`) for sources.
+- **Calls:** `@google/genai` `models.generateContent`, wrapped by `server/lib/gemini.ts`. Plain calls for the hackathon reader and stack picker, JSON output via `responseJsonSchema`. The fact checker passes `tools: [{ urlContext: {} }]` with JSON output, and reads `candidates[0].urlContextMetadata.urlMetadata[]` (`retrievedUrl`, `urlRetrievalStatus` = `URL_RETRIEVAL_STATUS_SUCCESS`) for sources.
 - **Grounding free tier facts as read on 10 Oct 2026 (the docs contradict each other; build step 1 found grounding isn't free on the learner's key):**
   - Pricing page: Gemini 2.5 Flash / Flash-Lite include grounding free up to **500 requests/day** (shared). Gemini 3.x grounding is listed under the **paid tier only** (5,000/month, then $14 per 1,000).
   - Grounding page: describes a **5,000/month free allowance** for Gemini 3 and newer.
   - Deprecations page: 2.5 models have no shutdown date, but access is limited to users who have **used 2.5 before**.
   - Rate limits page: per-model free limits are only shown in AI Studio.
 - **Usage per run:** about 1 call to read the hackathon + 1 to pick + 4–6 URL context lookups (plus a few plain calls when Exa is used). URL context is billed as normal input tokens, with no separate search quota.
-- **Model choice (build step 1):** `gemini-3.5-flash-lite`, with `gemini-3.8-flash` as a one-time retry when Gemini answers 503 "high demand". Recorded in `api/lib/gemini.ts`.
+- **Model choice (build step 1):** `gemini-3.5-flash-lite`, with `gemini-3.8-flash` as a one-time retry when Gemini answers 503 "high demand". Recorded in `server/lib/gemini.ts`.
 
 ### Exa (backup search)
 - **Docs:** https://exa.ai/docs/reference/search · pricing: https://exa.ai/pricing

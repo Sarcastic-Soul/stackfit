@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["bun"]
   },
-  "include": ["api", "scripts", "web/src", "vite.config.ts"]
+  "include": ["api", "server", "scripts", "web/src", "vite.config.ts"]
 }

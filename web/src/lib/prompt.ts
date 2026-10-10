@@ -1,6 +1,6 @@
 // Builds a self-contained prompt that asks any AI agent to repeat StackFit's
 // process for this hackathon and idea, starting from the current stack.
-import type { HackathonSummary, StackResult } from "../../../api/lib/types";
+import type { HackathonSummary, StackResult } from "../../../server/lib/types";
 
 function hackathonPart(summary: HackathonSummary) {
   const limits = [

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { HackathonSummary, StackResult } from "../../api/lib/types";
+import type { HackathonSummary, StackResult } from "../../server/lib/types";
 import { EditPanel, type Edits } from "./components/EditPanel";
 import { CopyPrompt } from "./components/CopyPrompt";
 import { ErrorLine } from "./components/ErrorLine";

@@ -2,7 +2,7 @@
 // before. One submit; the API rechecks only the layers that change.
 import { useState, type FormEvent } from "react";
 import { ArrowsClockwiseIcon, PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
-import type { StackResult } from "../../../api/lib/types";
+import type { StackResult } from "../../../server/lib/types";
 
 export type Edits = { swaps: Record<string, string>; pastTools: string };
 

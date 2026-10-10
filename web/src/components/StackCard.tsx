@@ -1,5 +1,5 @@
 import { ArrowSquareOutIcon, MinusIcon, QuestionIcon, SealCheckIcon } from "@phosphor-icons/react";
-import type { Fact, Layer } from "../../../api/lib/types";
+import type { Fact, Layer } from "../../../server/lib/types";
 import { BrandIcons } from "./BrandIcon";
 
 const TAGS = {

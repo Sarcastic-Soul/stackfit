@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --watch api/dev.ts & vite",
+    "dev": "bun --watch server/dev.ts & vite",
     "build": "tsc -p . && vite build",
     "check:gemini": "bun scripts/check-gemini.ts"
   },

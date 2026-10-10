@@ -2,7 +2,7 @@
 // shows the "pick, not default" idea and what each fact tag means.
 import { ArrowRightIcon, LightbulbIcon, LinkIcon, ListChecksIcon, StackIcon } from "@phosphor-icons/react";
 import { siNextdotjs, siReact, siVite } from "simple-icons";
-import type { Fact } from "../../../api/lib/types";
+import type { Fact } from "../../../server/lib/types";
 import { BrandIcons } from "./BrandIcon";
 import { Tag } from "./StackCard";
 

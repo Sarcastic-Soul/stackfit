@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ArrowSquareOutIcon, StackIcon } from "@phosphor-icons/react";
-import type { HackathonSummary } from "../../../api/lib/types";
+import type { HackathonSummary } from "../../../server/lib/types";
 
 function liveLink(value: HackathonSummary["liveLinkRequired"]) {
   if (value === true) return "required";
