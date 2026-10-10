@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { HackathonSummary, StackResult } from "../../api/lib/types";
 import { ErrorLine } from "./components/ErrorLine";
+import { HowItWorks } from "./components/HowItWorks";
 import { LinkInput } from "./components/LinkInput";
 import { StackView } from "./components/StackView";
 import { StageLog } from "./components/StageLog";
@@ -12,6 +13,14 @@ export function App() {
   const stack = useRun();
   const [summary, setSummary] = useState<HackathonSummary | null>(null);
   const [result, setResult] = useState<StackResult | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // Bring the finished stack into view (instantly when the user prefers less motion).
+  useEffect(() => {
+    if (!result) return;
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    resultRef.current?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+  }, [result]);
 
   function readLink(url: string) {
     setSummary(null);
@@ -28,8 +37,6 @@ export function App() {
       if (event.type === "result") setResult(event.data);
     });
   }
-
-  const untouched = !hackathon.busy && !summary && !hackathon.error && hackathon.stages.length === 0;
 
   return (
     <main className="mx-auto max-w-[1180px] px-4 pb-24 pt-10 md:pt-16">
@@ -52,11 +59,12 @@ export function App() {
         {hackathon.stages.length > 0 && <StageLog stages={hackathon.stages} />}
         {hackathon.error && <ErrorLine message={hackathon.error} />}
         {summary && <SummaryAndIdea summary={summary} busy={stack.busy} onPick={pickStack} />}
-        {untouched && <p className="font-mono text-xs text-dim">Nothing is saved. Refresh to start over.</p>}
       </div>
 
+      {!summary && <HowItWorks />}
+
       {(stack.stages.length > 0 || stack.error || result) && (
-        <div className="mt-10 space-y-4">
+        <div ref={resultRef} className="mt-10 scroll-mt-6 space-y-4">
           {stack.stages.length > 0 && <StageLog stages={stack.stages} />}
           {stack.error && <ErrorLine message={stack.error} />}
           {result && <StackView result={result} />}
